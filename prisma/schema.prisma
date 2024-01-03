@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model author {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(255)
+  rol          String?        @db.VarChar(100)
+  books_author books_author[]
+}
+
+model book {
+  id               Int            @id @default(autoincrement())
+  title            String         @db.VarChar(255)
+  synopsis         String?
+  publication_date String?        @db.VarChar(255)
+  magnet_link      String?        @unique @db.VarChar(500)
+  image_url        String?        @unique @db.VarChar(255)
+  number_of_pages  Int?
+  language         String?        @db.VarChar(50)
+  books_author     books_author[]
+  books_genre      books_genre[]
+  books_theme      books_theme[]
+  books_type       books_type[]
+  comment          comment[]
+  download         download[]
+  favorite         favorite[]
+  pending          pending[]
+  read             read[]
+  vote             vote[]
+}
+
+model books_author {
+  book_id   Int
+  author_id Int
+  author    author @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  book      book   @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([book_id, author_id])
+}
+
+model books_genre {
+  book_id  Int
+  genre_id Int
+  book     book  @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  genre    genre @relation(fields: [genre_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([book_id, genre_id])
+}
+
+model books_theme {
+  book_id  Int
+  theme_id Int
+  book     book  @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  theme    theme @relation(fields: [theme_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([book_id, theme_id])
+}
+
+model books_type {
+  book_id Int
+  type_id Int
+  book    book @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  type    type @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([book_id, type_id])
+}
+
+model comment {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  book_id     Int
+  text        String
+  date_posted DateTime @db.Date
+  book        book     @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user        user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model download {
+  id            Int      @id @default(autoincrement())
+  user_id       Int
+  book_id       Int
+  download_date DateTime @db.Date
+  book          book     @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user          user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model favorite {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  book_id    Int
+  created_at DateTime @db.Date
+  book       book     @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model genre {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique @db.VarChar(100)
+  books_genre books_genre[]
+}
+
+model pending {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  book_id    Int
+  added_date DateTime @db.Date
+  book       book     @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user       user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model read {
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  book_id   Int
+  read_date DateTime @db.Date
+  book      book     @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user      user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model theme {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique @db.VarChar(100)
+  books_theme books_theme[]
+}
+
+model type {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique @db.VarChar(100)
+  books_type books_type[]
+}
+
+model user {
+  id              Int        @id @default(autoincrement())
+  username        String     @unique @db.VarChar(100)
+  email           String     @unique @db.VarChar(255)
+  password_hash   String     @db.VarChar(255)
+  join_date       DateTime?  @db.Date
+  last_login      DateTime?  @db.Date
+  profile_pic_url String?    @db.VarChar(255)
+  comment         comment[]
+  download        download[]
+  favorite        favorite[]
+  pending         pending[]
+  read            read[]
+  vote            vote[]
+}
+
+model vote {
+  id      Int  @id @default(autoincrement())
+  user_id Int
+  book_id Int
+  value   Int
+  book    book @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user    user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
