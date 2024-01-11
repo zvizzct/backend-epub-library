@@ -1,5 +1,7 @@
 import express, { Router } from 'express'
 import path from 'path'
+import compression from 'compression'
+import cors from 'cors'
 
 interface Options {
   port: number
@@ -22,6 +24,10 @@ export class Server {
 
   async start() {
     //* Middlewares
+    this.app.use(express.json())
+    this.app.use(express.urlencoded({ extended: true }))
+    this.app.use(compression())
+    this.app.use(cors())
 
     //* Public Folder
     this.app.use(express.static(this.publicPath))
