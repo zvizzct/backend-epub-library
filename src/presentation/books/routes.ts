@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { BooksController } from './controller'
 import { BookDatasourceImpl } from '../../infrastructure/datasource/book.datasource.impl'
-import { BookRepositoryImpl } from '../../infrastructure/repositories/todo.repository.impl'
+import { BookRepositoryImpl } from '../../infrastructure/repositories/book.repository.impl'
 
 export class BookRoutes {
   static get routes(): Router {
